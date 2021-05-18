@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load pybo_filter %}
 {% block content %}
-    <div class="container-fluid my-3">
+    <div class="container my-3">
         <!-- 사용자오류 표시 -->
         {% if messages %}
             <div class="alert alert-danger my-3" role="alert">
@@ -88,7 +88,7 @@
             </div>
         </div>
         <h5 class="border-bottom my-3 py-2">{{question.answer_set.count}}개의 답변이 있습니다.</h5>
-        {% for answer in question.answer_set.all %}
+        {% for answer in answer_list %}
             <a name="answer_{{ answer.id }}"></a>
             <div class="row my-3">
                 <div class="col-1">
@@ -162,6 +162,44 @@
                 </div>
             </div>
         {% endfor %}
+        <!-- 페이징처리 시작 -->
+        <ul class="pagination justify-content-center">
+            <!-- 이전페이지 -->
+            {% if answer_list.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ answer_list.previous_page_number }}"><</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#"><</a>
+            </li>
+            {% endif %}
+            <!-- 페이지리스트 -->
+            {% for page_number in answer_list.paginator.page_range %}
+            {% if page_number >= answer_list.number|add:-4 and page_number <= answer_list.number|add:4 %}
+                {% if page_number == answer_list.number %}
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_number }}">{{ page_number }}</a>
+                </li>
+                {% endif %}
+            {% endif %}
+            {% endfor %}
+            <!-- 다음페이지 -->
+            {% if answer_list.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ answer_list.next_page_number }}">></a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link" tabindex="-1" aria-disabled="true" href="#">></a>
+            </li>
+            {% endif %}
+        </ul>
+    <!-- 페이징처리 끝 -->
         <form
             action="{% url 'pybo:answer_create' question.id %}"
             method="post"
@@ -186,7 +224,7 @@
                     class="form-control"
                     rows="10"></textarea>
             </div>
-            <input type="submit" value="답변등록" class="btn btn-primary">
+            <input type="submit" value="답변등록" class="btn btn-primary float-right mb-3">
         </form>
     </div>
 {% endblock %}
