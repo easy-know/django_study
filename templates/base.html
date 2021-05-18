@@ -16,9 +16,12 @@
     </head>
     <body>
     {% include "navbar.html" %}
+    <div class="d-flex align-items-stretch">
+    {% include "sideMenu.html" %}
     <!-- 기본 템플릿 안에 삽입될 내용 Start -->
     {% block content %}{% endblock %}
     <!-- 기본 템플릿 안에 삽입될 내용 End -->
+    </div>
     <!-- jQuery JS -->
     <script src="{% static 'jquery-3.6.0.min.js' %}"></script>
     <!-- Bootstrap JS -->
